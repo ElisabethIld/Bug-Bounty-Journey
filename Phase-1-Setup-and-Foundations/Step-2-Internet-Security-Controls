@@ -1,0 +1,69 @@
+Internet Security Controls
+
+
+
+1) Content Encoding:
+
+  - Base64 - transport images, web messages.
+            Uppercase and lowercase A to Z, 0 to 9, +, /, = (character for padding).
+
+  - Base64url - a modified version of base64 used for the URL format. 
+              Uses different non-alphanumeric characters and omits padding.
+
+  - Hex (Hexadecimal encoding) - base-16 format, 0 to F.
+              Takes up more space and is less efficient than base64.
+
+  - URL encoding - its designated hex number preceded by a % symbol (ex. localhost - %6c%6f%63%61%6c%68%6f%73%74).
+              https://en.wikipedia.org/wiki/Percent-encoding
+              https://www.urlencoder.org/
+
+
+
+2) Session-Based Authentication:
+
+  - Session Management -  website remembers your session. Allows the server to handle multiple requests from the same user.
+                        The server will assign an associated **session ID** for your browser that serves as proof of your identity.
+
+  - HTTP Cookies - are small pieces of data that web servers send to your browser.
+                  The server creates a session for you and sends the session ID to your browser as a cookie.
+
+
+
+4) Token-Based Authentication:
+
+    System stores this info directly in some sort of token.
+    Tokens allow servers to deduce your identity by decoding the token itself. 
+    This way, applications won’t have to store and maintain session information server-side.
+
+  - Signatures - used to verify the integrity of a piece of data. 
+                They are special strings that can be generated only if you know a secret key.
+
+
+
+5) JSON Web Tokens (JWT):
+
+      It has three components: 
+          - a header, 
+          - a payload, and 
+          - a signature. 
+
+  - Header - identifies the algorithm used to generate the signature (base64url encoded string).
+
+  - Payload - about the user’s identity (base64url encoded).
+
+  - Signature - validates that the user hasn’t tampered with the token (concatenating the header with the payload).
+
+    Most common types of signing algorithms for JWTs:
+                - HMAC (signed with a key and later verified with the same key),
+                - RSA (created with a private key and later verified with the public key).
+
+
+  Brute-Force - also be possible to guess the key used to sign a JWT (the attacker has a lot of information to start with).
+
+  More examples of JWT vulnerabilities - search term "JWT security issues".
+
+
+
+6) The Same-Origin Policy (SOP):
+        Restricts how a script from one origin can interact with the resources of a different origin.
+        This rule protects modern web applications.
