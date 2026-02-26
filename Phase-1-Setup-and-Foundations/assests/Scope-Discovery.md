@@ -57,3 +57,4 @@ The **crt.sh** website also has a useful utility that lets you retrieve the info
 
 <img width="558" height="661" alt="image" src="https://github.com/user-attachments/assets/cb2a0ba8-4e1f-4a9f-9799-fd2842ec1068" />
 
+## Subdomain Enumeration
