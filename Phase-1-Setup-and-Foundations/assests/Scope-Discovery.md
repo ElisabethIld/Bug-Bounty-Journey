@@ -43,3 +43,11 @@ The `-h` flag in the `whois` command sets the **WHOIS server** to retrieve infor
 `whois.cymru.com` is a database that translates **IPs** to **ASNs**.
 
 If the company has a dedicated IP range and doesn’t mark those addresses as out of scope, you could plan to attack every IP in that range.
+
+## Certificate Parsing (SSL - Secure Sockets Layer)
+
+Used to **encrypt** web traffic.
+
+An **SSL** certificate’s *Subject Alternative Name* field.
+
+Online databases like **crt.sh**, **Censys**, and **Cert Spotter**.
