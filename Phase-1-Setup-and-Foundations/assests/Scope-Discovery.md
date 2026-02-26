@@ -50,4 +50,7 @@ Used to **encrypt** web traffic.
 
 An **SSL** certificate’s *Subject Alternative Name* field.
 
-Online databases like **crt.sh**, **Censys**, and **Cert Spotter**.
+Online databases like **crt.sh** - https://crt.sh/, **Censys**, and **Cert Spotter**.
+
+The **crt.sh** website also has a useful utility that lets you retrieve the information in **JSON** format:
+`https://crt.sh/?q=facebook.com&output=json`
