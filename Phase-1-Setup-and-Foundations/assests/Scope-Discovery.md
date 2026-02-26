@@ -54,3 +54,6 @@ Online databases like **crt.sh** - https://crt.sh/, **Censys**, and **Cert Spott
 
 The **crt.sh** website also has a useful utility that lets you retrieve the information in **JSON** format:
 `https://crt.sh/?q=facebook.com&output=json`
+
+<img width="558" height="661" alt="image" src="https://github.com/user-attachments/assets/cb2a0ba8-4e1f-4a9f-9799-fd2842ec1068" />
+
