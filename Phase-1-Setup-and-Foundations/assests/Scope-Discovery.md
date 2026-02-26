@@ -18,3 +18,28 @@ NetRange: 157.240.0.0 - 157.240.255.255
 CIDR: 157.240.0.0/16
 NetName: THEFA-3 etc..
 ```
+
+**Autonomous System Numbers (ASNs)** identify the owners of these networks. et. By checking if *two IP addresses* share *an ASN*, 
+you can determine whether the IPs belong to the *same owner*.
+
+We can deduce that any IP within the *157.240.2.21* to *157.240.2.34* range probably belongs to *Facebook*:
+
+```
+$ whois -h whois.cymru.com 157.240.2.20
+AS | IP | AS Name
+32934 | 157.240.2.20 | FACEBOOK, US
+
+$ whois -h whois.cymru.com 157.240.2.27
+AS | IP | AS Name
+32934 | 157.240.2.27 | FACEBOOK, US
+
+$ whois -h whois.cymru.com 157.240.2.35
+AS | IP | AS Name
+32934 | 157.240.2.35 | FACEBOOK, US
+```
+
+The `-h` flag in the `whois` command sets the **WHOIS server** to retrieve information from.
+
+`whois.cymru.com` is a database that translates **IPs** to **ASNs**.
+
+If the company has a dedicated IP range and doesn’t mark those addresses as out of scope, you could plan to attack every IP in that range.
