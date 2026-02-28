@@ -106,3 +106,13 @@ If you run a **Shodan** search on *scanme.nmap.org*’s IP address, *45.33.32.15
 <img width="1890" height="711" alt="image" src="https://github.com/user-attachments/assets/a003c79d-fd6b-49e1-93db-e5275e8b6714" />
 
 and provides *additional information* about the server.
+
+## Directory Brute-Forcing
+
+Directory brute-forcing can sometimes allow you to **directly take over a server**!
+
+For example, a pathname that includes `phpmyadmin` usually means that the application is built with `PHP`.
+
+**Dirsearch** or **Gobuster** use wordlists to construct URLs, and then request these URLs from a web server.
+
+If the server responds with a **status code** in the `200` range, the directory or file **exists**. 
