@@ -87,10 +87,22 @@ Running enumeration tools recursively: **add the results** of your first run to 
 
 ## Service Enumeration
 
-In *active scanning*, you **directly** engage with the *server*.
+- In *active scanning*, you **directly** engage with the *server*.
 
 Tools like **Nmap** or **Masscan**
 
-Reveals the **open ports** on *scanme.nmap.org*:
+Reveals the **open ports** on *scanme.nmap.org* (target):
 
 ```$ nmap scanme.nmap.org```
+
+- In *passive scanning*, you use third-party resources **without** interacting with the *server*.
+
+ Is **stealthier** and helps attackers **avoid detection**.
+
+**Shodan**, a search engine that lets the user find machines connected to the internet.
+
+If you run a **Shodan** search on *scanme.nmap.org*’s IP address, *45.33.32.156*, you get the result:
+
+<img width="1890" height="711" alt="image" src="https://github.com/user-attachments/assets/a003c79d-fd6b-49e1-93db-e5275e8b6714" />
+
+and provides *additional information* about the server.
