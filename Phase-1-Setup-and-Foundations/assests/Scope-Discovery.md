@@ -124,3 +124,19 @@ Examine `403` pages carefully to see if you can bypass the **protection to acces
 ```$ ./dirsearch.py -u scanme.nmap.org -e php``` or
 
 ```$ dirsearch -u scanme.nmap.org -e php``` (for install `sudo apt install dirsearch`).
+
+**Gobuster’s** `dir` mode is used to find additional content.
+
+```gobuster dir -u target_url -w wordlist```
+
+Manually visiting all the pages can be time-consuming. 
+
+Instead, use a screenshot tool like:
+- **EyeWitness** (https://github.com/FortyNorthSecurity/EyeWitness/) or
+- **Snapper** (https://github.com/dxa4481/Snapper/) to automatically verify that a page is hosted on each location. 
+
+*EyeWitness* accepts a list of URLs and takes screenshots of each page. In a photo gallery app, you can quickly skim these to find the interesting-looking
+ones. Keep an eye out for hidden services, such as developer or admin panels, directory listing pages, analytics pages, and pages that look outdated and illmaintained. These are all **common places for vulnerabilities** to manifest.
+
+## Spidering the Site
+
