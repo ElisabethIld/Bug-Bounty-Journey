@@ -75,3 +75,12 @@ Command to **remove duplicate** items from a set of two wordlists:
  `-d` to specify the domain, `-w` to specify the wordlist
 
  ```gobuster dns -d target_domain -w wordlist```
+
+**Altdns** (https://github.com/infosec-au/altdns/) - automating which discovers subdomains with names that are permutations of other subdomain names.
+
+For example, if you’ve already learned that *example.com* uses **Jenkins**, you can check if *jenkins.example.com* is a valid subdomain.
+
+Look for **subdomains** of **subdomains**: *dev.example.com*, you might find subdomains like *1.dev.example.com*.
+
+Running enumeration tools recursively: **add the results** of your first run to your Known Domains list and **run the tool again**.
+
