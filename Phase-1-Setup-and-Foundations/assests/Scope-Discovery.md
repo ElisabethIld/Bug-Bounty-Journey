@@ -64,3 +64,6 @@ The **crt.sh** website also has a useful utility that lets you retrieve the info
 Daniel Miessler’s *SecLists* at https://github.com/danielmiessler/SecLists/. 
 
 **Commonspeak2** (https://github.com/assetnote/commonspeak2/) to generate wordlists based on the most current internet data.
+
+Command to **remove duplicate** items from a set of two wordlists:
+`sort -u wordlist1.txt wordlist2.txt`
