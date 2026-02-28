@@ -58,3 +58,9 @@ The **crt.sh** website also has a useful utility that lets you retrieve the info
 <img width="558" height="661" alt="image" src="https://github.com/user-attachments/assets/cb2a0ba8-4e1f-4a9f-9799-fd2842ec1068" />
 
 ## Subdomain Enumeration
+
+**Sublist3r**, **SubBrute**, **Amass**, and **Gobuster** can enumerate subdomains automatically.
+
+Daniel Miessler’s *SecLists* at https://github.com/danielmiessler/SecLists/. 
+
+**Commonspeak2** (https://github.com/assetnote/commonspeak2/) to generate wordlists based on the most current internet data.
