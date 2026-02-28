@@ -84,3 +84,13 @@ Look for **subdomains** of **subdomains**: *dev.example.com*, you might find sub
 
 Running enumeration tools recursively: **add the results** of your first run to your Known Domains list and **run the tool again**.
 
+
+## Service Enumeration
+
+In *active scanning*, you **directly** engage with the *server*.
+
+Tools like **Nmap** or **Masscan**
+
+Reveals the **open ports** on *scanme.nmap.org*:
+
+```$ nmap scanme.nmap.org```
