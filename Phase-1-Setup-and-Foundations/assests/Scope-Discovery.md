@@ -99,7 +99,7 @@ Reveals the **open ports** on *scanme.nmap.org* (target):
 
  Is **stealthier** and helps attackers **avoid detection**.
 
-**Shodan**, a search engine that lets the user find machines connected to the internet.
+**Censys**, **Project Sonar**, **Shodan** - a search engine that lets the user find machines connected to the internet.
 
 If you run a **Shodan** search on *scanme.nmap.org*’s IP address, *45.33.32.156*, you get the result:
 
