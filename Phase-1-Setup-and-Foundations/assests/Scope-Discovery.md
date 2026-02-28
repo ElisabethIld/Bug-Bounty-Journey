@@ -67,3 +67,11 @@ Daniel Miessler’s *SecLists* at https://github.com/danielmiessler/SecLists/.
 
 Command to **remove duplicate** items from a set of two wordlists:
 `sort -u wordlist1.txt wordlist2.txt`
+
+`-u` - to return only **unique** items in the sorted list.
+
+### Gobuster is a tool for brute-forcing.
+
+ `-d` to specify the domain, `-w` to specify the wordlist
+
+ ```gobuster dns -d target_domain -w wordlist```
