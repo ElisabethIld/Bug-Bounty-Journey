@@ -116,3 +116,11 @@ For example, a pathname that includes `phpmyadmin` usually means that the applic
 **Dirsearch** or **Gobuster** use wordlists to construct URLs, and then request these URLs from a web server.
 
 If the server responds with a **status code** in the `200` range, the directory or file **exists**. 
+
+Examine `403` pages carefully to see if you can bypass the **protection to access** the content.
+
+`-u` - specifies **the hostname** and `-e` - specifies **the file extension** to use when constructing URLs:
+
+```$ ./dirsearch.py -u scanme.nmap.org -e php``` or
+
+```$ dirsearch -u scanme.nmap.org -e php``` (for install `sudo apt install dirsearch`).
