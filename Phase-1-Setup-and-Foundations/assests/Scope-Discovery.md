@@ -204,6 +204,24 @@ And this command *will remove* the TEST_FILE that you just uploaded:
 
 ## GitHub Recon
 
+Search an organization’s **GitHub** repositories for sensitive data.
 
-## 
+- The **organization’s name** or
+- **product names** via GitHub’s search bar, or
+- the GitHub **accounts** of known **employees**.
 
+Dive into the code. Special attention to the `Issues` and `Commits` sections.
+
+`Code` section for potentially vulnerable code *snippets*. 
+
+Check the `Blame` and `History` sections at the *top-right corner* of the file’s page to see.
+
+<img width="350" height="160" alt="image" src="https://github.com/user-attachments/assets/839f9aaf-b902-4497-90b5-a586f2cab6b6" />
+
+- API keys,
+- encryption keys, and
+- database passwords.
+
+Terms like `key`, `secret`, `password`. 
+
+After, you can use **KeyHacks** (https://github.com/streaak/keyhacks/) to check if the credentials are valid and learn how to use them to access the target’s services.
