@@ -170,6 +170,10 @@ amazonaws COMPANY_NAME
 s3 COMPANY_NAME
 ```
 
+**GrayhatWarfare** (https://buckets.grayhatwarfare.com/) is an online search to find publicly *exposed S3 buckets*.
+
+Try to *brute-force buckets* by using *keywords*. **Lazys3** (https://github.com/nahamsec/lazys3/) do this.
+
 ## GitHub Recon
 
 
