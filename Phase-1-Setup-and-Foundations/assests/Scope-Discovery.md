@@ -218,6 +218,7 @@ Check the `Blame` and `History` sections at the *top-right corner* of the fileâ€
 
 <img width="350" height="160" alt="image" src="https://github.com/user-attachments/assets/839f9aaf-b902-4497-90b5-a586f2cab6b6" />
 
+
 - API keys,
 - encryption keys, and
 - database passwords.
@@ -225,3 +226,7 @@ Check the `Blame` and `History` sections at the *top-right corner* of the fileâ€
 Terms like `key`, `secret`, `password`. 
 
 After, you can use **KeyHacks** (https://github.com/streaak/keyhacks/) to check if the credentials are valid and learn how to use them to access the targetâ€™s services.
+
+Automate the GitHub recon:
+- **Gitrob** (https://github.com/michenriksen/gitrob/) locates potentially sensitive files pushed to public repositories on GitHub,
+- **TruffleHog** (https://github.com/trufflesecurity/truffleHog/) specializes in finding secrets (by regex searches and scanning for high-entropy strings).
