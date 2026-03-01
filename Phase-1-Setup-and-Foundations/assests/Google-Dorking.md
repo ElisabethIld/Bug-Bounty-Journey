@@ -32,4 +32,10 @@ Find company resources hosted by a third party online (like *Amazon S3 buckets*)
 
 Look for special extensions. Often used for script files: *.log, .php, .cfm, .asp, .jsp, .pl* - **site:example.com ext:php** or **site:example.com ext:log**
 
- This query searches the site *example.com* for text files that contain *password* - **site:example.com ext:txt password**
+This query searches the site *example.com* for text files that contain *password* - **site:example.com ext:txt password**
+
+**Amazon S3:**
+```
+site:s3.amazonaws.com COMPANY_NAME
+site:amazonaws.com COMPANY_NAME
+```
