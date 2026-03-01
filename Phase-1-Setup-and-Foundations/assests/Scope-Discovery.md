@@ -150,6 +150,20 @@ Tools -> Spider -> [specifying the starting URL] -> Start Scan
 
 ## Third-Party Hosting
 
+**S3** - *Simple Storage Service*, is **Amazon’s** online storage.
+
+- **Buckets** to serve in their *web applications*, or
+- can use **S3 buckets** as a *backup* or *storage*.
+
+URL format: 
+`BUCKET.s3.amazonaws.com` or `s3.amazonaws.com/BUCKET`.
+
+Google Dorking:
+
+```
+site:s3.amazonaws.com COMPANY_NAME
+site:amazonaws.com COMPANY_NAME
+```
 
 ## GitHub Recon
 
