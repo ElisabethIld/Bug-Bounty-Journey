@@ -140,6 +140,10 @@ ones. Keep an eye out for hidden services, such as developer or admin panels, di
 
 ## Spidering the Site
 
+Identifies all the *URLs embedded* on the page and visits them.
+
+**OWASP Zed Attack Proxy (ZAP)** at https://www.zaproxy.org/
+Burp Suite has an equivalent tool called *the crawler*.
 
 ## Third-Party Hosting
 
