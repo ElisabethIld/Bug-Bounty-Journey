@@ -172,7 +172,9 @@ s3 COMPANY_NAME
 
 **GrayhatWarfare** (https://buckets.grayhatwarfare.com/) is an online search to find publicly *exposed S3 buckets*.
 
-Try to *brute-force buckets* by using *keywords*. **Lazys3** (https://github.com/nahamsec/lazys3/) do this.
+**Lazys3** (https://github.com/nahamsec/lazys3/) try to *brute-force buckets* by using *keywords*.
+
+**Bucket Stream** (https://github.com/eth0izzle/bucket-stream/)
 
 ## GitHub Recon
 
