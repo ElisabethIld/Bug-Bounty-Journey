@@ -176,6 +176,32 @@ s3 COMPANY_NAME
 
 **Bucket Stream** (https://github.com/eth0izzle/bucket-stream/)
 
+### Buckets 
+
+that belong to the target organization, use the AWS command line tool to see if you can access one.
+
+`pip install awscli`
+
+Configure it to work with AWS by following Amazon’s documentation at https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html.
+
+Now able to access buckets directly from your terminal via the aws s3 command:
+
+`aws s3 ls s3://BUCKET_NAME/`
+
+If this works, can read the contents and copying files to your local machine:
+
+`aws s3 cp s3://BUCKET_NAME/FILE_NAME/path/to/local/directory`
+
+You can also try *to upload* new files to the bucket or *delete* files from it. 
+
+For example, *will copy* your local file named TEST_FILE into the *target’s S3 bucket*:
+
+`aws s3 cp TEST_FILE s3://BUCKET_NAME/`
+
+And this command *will remove* the TEST_FILE that you just uploaded:
+
+`aws s3 rm s3://BUCKET_NAME/TEST_FILE`
+
 ## GitHub Recon
 
 
