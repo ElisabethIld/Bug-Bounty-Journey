@@ -163,6 +163,11 @@ Google Dorking:
 ```
 site:s3.amazonaws.com COMPANY_NAME
 site:amazonaws.com COMPANY_NAME
+
+amazonaws s3 COMPANY_NAME
+amazonaws bucket COMPANY_NAME
+amazonaws COMPANY_NAME
+s3 COMPANY_NAME
 ```
 
 ## GitHub Recon
