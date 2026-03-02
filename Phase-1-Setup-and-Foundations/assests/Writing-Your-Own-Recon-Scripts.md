@@ -181,3 +181,64 @@ fi
 $ ./recon.sh scanme.nmap.org nmap-only
 $ ./recon.sh scanme.nmap.org dirsearch-only
 ```
+
+## Running Additional Tools
+### For example, you want to switch between these three modes or run all three recon tools at once:
+```
+$ ./recon.sh scanme.nmap.org nmap-only
+$ ./recon.sh scanme.nmap.org dirsearch-only
+$ ./recon.sh scanme.nmap.org crt-only
+```
+
+The syntax of `case` statements (without a long list of `if-else`). Note that the statement ends with `esac` (`case` backward):
+```
+case $VARIABLE_NAME in
+ case1)
+  Do something
+  ;;
+ case2)
+  Do something
+  ;;
+ caseN)
+  Do something
+  ;;
+ *)
+  Default case, this case is executed if no other case matches.
+  ;;
+esac
+```
+
+### Improve our script with `case` (instead of multiple `if-else`):
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+TODAY=$(date)
+echo "This scan was created on $TODAY"
+DOMAIN=$1
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+case $2 in
+ nmap-only)
+ nmap $DOMAIN > $DIRECTORY/nmap
+ echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+ ;;
+ dirsearch-only)
+ $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+ ;;
+ crt-only)
+ curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+ echo "The results of cert parsing is stored in $DIRECTORY/crt."
+ ;;
+ *)
+ nmap $DOMAIN > $DIRECTORY/nmap
+ echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+ $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+ echo "The results of cert parsing is stored in $DIRECTORY/crt."
+ ;;
+esac
+```
+- the `curl` command downloads the content of a page.
