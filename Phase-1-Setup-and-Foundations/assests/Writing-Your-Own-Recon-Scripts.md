@@ -133,3 +133,51 @@ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
 - `echo "This scan was created on $TODAY"` this lets us output a message indicating the *day* on which we performed the scan.
 
 ## Adding `Options` to Choose the Tools to Run:
+### Conditionals in bash, the syntax of an `if` statement, the conditional statement ends with the `fi` keyword:
+```
+if [condition 1]
+then
+ # Do if condition 1 is satisfied
+elif [condition 2]
+then
+ # Do if condition 2 is satisfied, and condition 1 is not satisfied
+else
+ # Do something else if neither condition is satisfied
+fi
+```
+
+To be able to specify the scan `MODE`: `$ ./recon.sh scanmme.nmap.org MODE`.
+
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+TODAY=$(date)
+echo "This scan was created on $TODAY"
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+if [ $2 == "nmap-only" ]
+then
+ nmap $DOMAIN > $DIRECTORY/nmap
+ echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+elif [ $2 == "dirsearch-only" ]
+then
+ $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php –simple-report=$DIRECTORY/dirsearch
+ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+else
+ nmap $DOMAIN > $DIRECTORY/nmap
+ echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+ $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+fi
+```
+
+- `"nmap-only"` run `nmap` only and store the results to a file named *nmap*.
+- `"dirsearch-only"` execute and store the results of `dirsearch` only.
+- if the user specifies neither - `else` - run both scans - `nmap $DOMAIN > $DIRECTORY/nmap`.
+
+### Can make your tool run only the `nmap` or `dirsearch` commands by specifying one of these:
+```
+$ ./recon.sh scanme.nmap.org nmap-only
+$ ./recon.sh scanme.nmap.org dirsearch-only
+```
