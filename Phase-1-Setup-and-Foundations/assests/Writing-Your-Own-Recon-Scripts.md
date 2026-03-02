@@ -58,5 +58,54 @@ $ ./recon.sh scanme.nmap.org
 
 ## Saving Tool Output to a File
 
+- *Input redirection* is using the content of a file, or the output of another program, as the input to your script.
+- *Output redirection* is redirecting the output of a program to another location, such as to a file or another program.
 
+### The most useful redirection operators:
 
+- `PROGRAM > FILENAME` writes the program’s output *into the file* with that name (it *will clear* any content from the file first, also *create* the file if the file does not already exist);
+
+- `PROGRAM >> FILENAME` appends the output of the program *to the end* of the file, *without clearing* the file’s original content;
+
+- `PROGRAM < FILENAME` *reads* from the file and uses its content as the program input;
+
+- `PROGRAM1 | PROGRAM2` uses the *output* of `PROGRAM1` as the *input* to `PROGRAM2`.
+
+### Write the results of the `nmap` and `dirsearch` scans into different files:
+```
+#!/bin/bash
+echo "Creating directory $1_recon."
+mkdir $1_recon
+nmap $1 > $1_recon/nmap
+echo "The results of nmap scan are stored in $1_recon/nmap."
+/PATH/TO/dirsearch.py -u $1 -e php --simple-report=$1_recon/dirsearch
+echo "The results of dirsearch scan are stored in $1_recon/dirsearch."
+```
+- `echo` prints a message to the terminal.
+- `mkdir` creates a directory with the name `DOMAIN_recon`
+- store the results of `nmap` into a *file* named `nmap` in the newly created directory.
+- dirsearch’s `simple-report` flag generates a report in the designated location. Store the results of `dirsearch` to a file named *dirsearch* in the new directory.
+
+### Variables in *bash* can be assigned using the syntax (no spaces around the `=` sign):
+```
+VARIABLE_NAME=VARIABLE_VALUE
+```
+### The syntax for referencing variables:
+```
+$VARIABLE_NAME
+```
+
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+DOMAIN=$1
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+nmap $DOMAIN > $DIRECTORY/nmap
+echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+$PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php –simple-report=$DIRECTORY/dirsearch
+echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+```
+- use `${DOMAIN}_recon` instead of `$DOMAIN_recon` bash would recognize the entirety of `DOMAIN_recon` as the variable name (the `{}` tell).
+- we also stored the `$PATH_TO_DIRSEARCH` in *a variable* (to make it easy to change in the future).
