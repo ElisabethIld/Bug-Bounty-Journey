@@ -109,3 +109,27 @@ echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
 ```
 - use `${DOMAIN}_recon` instead of `$DOMAIN_recon` bash would recognize the entirety of `DOMAIN_recon` as the variable name (the `{}` tell).
 - we also stored the `$PATH_TO_DIRSEARCH` in *a variable* (to make it easy to change in the future).
+
+## Adding the `Date` of the Scan to the Output:
+
+*Command substitution*, or operating on the output of a command. 
+
+- `$()` tells Unix to execute the command surrounded by the parentheses and assign its output to the value of a variable.
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+TODAY=$(date)
+echo "This scan was created on $TODAY"
+DOMAIN=$1
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+nmap $DOMAIN > $DIRECTORY/nmap
+echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+$PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+```
+- `TODAY=$(date)` assign the output of the `date` command to the variable `TODAY`
+- `echo "This scan was created on $TODAY"` this lets us output a message indicating the *day* on which we performed the scan.
+
+## Adding `Options` to Choose the Tools to Run:
