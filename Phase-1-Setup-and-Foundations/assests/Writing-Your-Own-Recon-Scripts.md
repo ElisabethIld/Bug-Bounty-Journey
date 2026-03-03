@@ -316,3 +316,93 @@ nmap_scan
 Here:
 - the `$1` in the function refers to the first argument that `nmap_scan` was called with, not the argument our `recon.sh` script was called with. Since
 `nmap_scan` wasn’t called with any arguments, `$1` is blank.
+
+## Parsing the Results
+
+*Global Regular Expression Print (`grep`)* to search for a certain piece of information in the output files.
+```
+grep password file.txt
+```
+- to search for the string `password`
+- in the file `file.txt`
+
+Search the `nmap` output file to see if the target has `port 80` open:
+```
+$ grep 80 TARGET_DIRECTORY/nmap
+80/tcp open http
+```
+
+###  A *regular expression*, or `regex`
+Is a special string that describes a search pattern.
+
+For example, the output of the `nmap` command looks like this:
+```
+Starting Nmap 7.60 ( https://nmap.org )
+Nmap scan report for scanme.nmap.org (45.33.32.156)
+Host is up (0.065s latency).
+Other addresses for scanme.nmap.org (not scanned): 2600:3c01::f03c:91ff:fe18:bb2f
+Not shown: 992 closed ports
+PORT STATE SERVICE
+22/tcp open ssh
+25/tcp filtered smtp
+80/tcp open http
+135/tcp filtered msrpc
+139/tcp filtered netbios-ssn
+445/tcp filtered microsoft-ds
+9929/tcp open nping-echo
+31337/tcp open Elite
+Nmap done: 1 IP address (1 host up) scanned in 2.43 seconds
+```
+
+You might want *to trim* the irrelevant messages from the file so it looks more like this:
+```
+PORT STATE SERVICE
+22/tcp open ssh
+25/tcp filtered smtp
+80/tcp open http
+135/tcp filtered msrpc
+139/tcp filtered netbios-ssn
+445/tcp filtered microsoft-ds
+9929/tcp open nping-echo
+31337/tcp open Elite
+```
+↑
+Command *to filter out* the messages at the **start** and **end** of `nmap`’s output and keep only the essential part of the report:
+```
+grep -E "^\S+\s+\S+\s+\S+$" DIRECTORY/nmap > DIRECTORY/nmap_cleaned
+```
+- `-E` flag tells `grep` you’re using a regex,
+- `\s+` would match any whitespace one or more characters long,
+- `\S+` would match any non-whitespace one or more characters long,
+- `"^\S+\s+\S+\s+\S+$"` specifies that we should extract lines that contain three strings separated by two whitespaces.
+
+To account for *extra whitespaces* that might be in the command output, let’s *add two more* optional spaces around our search string:
+```
+"^\s*\S+\s+\S+\s+\S+\s*$"
+```
+
+A `regex` consists of two parts:
+- *Constants* are sets of strings, while
+- *Operators* are symbols that denote operations over these strings.
+
+### `Regex` operators that represent *characters*:
+- `\d` matches any digit,
+- `\w` matches any character,
+- `\s` matches any whitespace, and
+- `\S` matches any non-whitespace,
+- `.` matches with any single character,
+- `\` escapes a special character,
+- `^` matches the start of the string or line,
+- `$` matches the end of the string or line.
+
+Specify the *number* of characters to match:
+- `*` matches the preceding character zero or more times,
+- `+` matches the preceding character one or more times,
+- `{3}` matches the preceding character three times,
+- `{1, 3}` matches the preceding character one to three times,
+- `{1, }` matches the preceding character one or more times,
+- `[abc]` matches one of the characters within the brackets,
+- `[a-z]` matches one of the characters within the range of *a* to *z*,
+- `(a|b|c)` matches either *a* or *b* or *c*.
+
+### Regex syntax - RexEgg’s cheat sheet - https://www.rexegg.com/regex-quickstart.html
