@@ -220,25 +220,99 @@ echo "Creating directory $DIRECTORY."
 mkdir $DIRECTORY
 case $2 in
  nmap-only)
- nmap $DOMAIN > $DIRECTORY/nmap
- echo "The results of nmap scan are stored in $DIRECTORY/nmap."
- ;;
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+  ;;
  dirsearch-only)
- $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
- echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
- ;;
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+  ;;
  crt-only)
- curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
- echo "The results of cert parsing is stored in $DIRECTORY/crt."
- ;;
+  curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+  echo "The results of cert parsing is stored in $DIRECTORY/crt."
+  ;;
  *)
- nmap $DOMAIN > $DIRECTORY/nmap
- echo "The results of nmap scan are stored in $DIRECTORY/nmap."
- $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
- echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
-curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
- echo "The results of cert parsing is stored in $DIRECTORY/crt."
- ;;
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+  curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+  echo "The results of cert parsing is stored in $DIRECTORY/crt."
+  ;;
 esac
 ```
 - the `curl` command downloads the content of a page.
+- `-o` option lets you specify an output file.
+
+### The syntax of a bash `function`:
+```
+FUNCTION_NAME()
+{
+ DO_SOMETHING
+}
+```
+
+Let’s add `functions` to the script:
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+TODAY=$(date)
+echo "This scan was created on $TODAY"
+DOMAIN=$1
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+nmap_scan()
+{
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+}
+dirsearch_scan()
+{
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+}
+crt_scan()
+{
+  curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+  echo "The results of cert parsing is stored in $DIRECTORY/crt."
+}
+case $2 in
+ nmap-only)
+  nmap_scan
+  ;;
+ dirsearch-only)
+  dirsearch_scan
+  ;;
+ crt-only)
+  crt_scan
+  ;;
+ *)
+  nmap_scan
+  dirsearch_scan
+  crt_scan
+  ;;
+esac
+```
+
+We created three functions:
+- `nmap_scan`,
+- `dirsearch_scan`, and
+- `crt_scan`
+
+We put the `scan` and `echo` commands in these functions so we can call them repeatedly without writing the same code over and over.
+
+All bash variables are *GLOBAL except* for input parameters like `$1`, `$2`, and `$3`.
+
+Values like `$1`, `$2`, and `$3` can refer only to the values the function is called with, so you can’t use a script’s input arguments within a function, like this:
+```
+nmap_scan()
+{
+  nmap $1 > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+}
+nmap_scan
+```
+Here:
+- the `$1` in the function refers to the first argument that `nmap_scan` was called with, not the argument our `recon.sh` script was called with. Since
+`nmap_scan` wasn’t called with any arguments, `$1` is blank.
