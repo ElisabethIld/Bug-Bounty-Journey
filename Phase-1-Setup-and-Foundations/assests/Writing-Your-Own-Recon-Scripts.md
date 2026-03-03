@@ -642,4 +642,6 @@ You can also use `&&` and `||` to combine test expressions.
 
 Find more comparison flags in the `test` command’s manual by running `man test` (you can always enter `man` followed by the command name).
 
+## Writing a Function Library
+
 
