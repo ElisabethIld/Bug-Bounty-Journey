@@ -476,3 +476,170 @@ jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report
 - `$DIRECTORY/nmap >> $DIRECTORY/report` append the results of the `nmap` and `dirsearch` commands into the `report` file,
 - `cat $DIRECTORY/dirsearch >> $DIRECTORY/report`. The `cat` command prints the contents of a file to standard output, but we can also use it to redirect the content of the file into another file,
 - `echo "Results for crt.sh:" >> $DIRECTORY/report` and `jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report` extract domain names from the `crt.sh` report and append it to the end of the `report` file.
+
+## Scanning Multiple Domains
+
+To write a tool that can scan *multiple domains* with a single command, like this:
+```
+./recon.sh facebook.com fbcdn.net nmap-only
+```
+The `getopts` tool parses options from the command line by using singlecharacter flags.
+
+*OPTSTRING* specifies the option letters that `getopts` should recognize:
+  -  if it should recognize the options `-m` and `-i`, you should specify `mi`,
+  -  if you want an option to contain argument values, the letter should be followed by a colon, like `m:i`.
+
+*NAME* argument specifies the variable name that stores the option letter. 
+```
+getopts OPTSTRING NAME
+```
+
+The `getopts` tool also automatically stores the value of any options into the `$OPTARG` variable. We can store that value into a variable named `MODE`:
+```
+getopts "m:" OPTION
+MODE=$OPTARG
+```
+- `-m` flag to specify the scan mode and assume that all other arguments are domains.
+
+#### `getopts` stops parsing arguments when it encounters an argument that doesn’t start with the - character.
+So you’ll need to place the scan mode *before* the domain arguments:
+```
+./recon.sh -m nmap-only facebook.com fbcdn.net
+```
+
+### Loop
+
+Bash has two types of loops:
+- `for` - works better for our purposes, as we already know the number of values we are looping through (you already have a list of values to iterate through),
+- `while` - when you’re not sure how many values to loop through but want to specify the condition in which the execution should stop.
+
+Syntax of a `for`, for every item in *LIST_OF_VALUES*, bash will execute the code between `do` and `done` once:
+```
+for i in LIST_OF_VALUES
+do
+ DO SOMETHING
+done
+```
+
+Now let’s implement our functionality:
+```
+for i in "${@:$OPTIND:$#}"
+do
+ # Do the scans for $i
+done
+```
+
+- `"${@:$OPTIND:$#}"` that contains every command line argument, besides the ones that are already parsed by `getopts`, which stores the index of the first argument after the options it parses into a variable named `$OPTIND`,
+- `"${@:OPTIND:}"` slices the array so that it removes the *MODE* argument (like `nmap-only`) making sure that we iterate through only the domains part of our input,
+- `$@` represent the array containing all input arguments,
+- `$#` is the number of command line arguments passed in,
+- `$i` variable represents the current item in the argument array.
+
+In bash, you can *slice arrays* by using this syntax:
+```
+"${INPUT_ARRAY:START_INDEX:END_INDEX}"
+```
+
+We can then wrap the loop around the code:
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+nmap_scan()
+{
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+}
+dirsearch_scan()
+{
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+}
+crt_scan()
+{
+ curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+ echo "The results of cert parsing is stored in $DIRECTORY/crt."
+}
+getopts "m:" OPTION
+MODE=$OPTARG
+
+for i in "${@:$OPTIND:$#}"
+do
+
+ DOMAIN=$i
+ DIRECTORY=${DOMAIN}_recon
+ echo "Creating directory $DIRECTORY."
+ mkdir $DIRECTORY
+
+ case $MODE in
+  nmap-only)
+   nmap_scan
+   ;;
+  dirsearch-only)
+   dirsearch_scan
+   ;;
+  crt-only)
+   crt_scan
+   ;;
+  *)
+   nmap_scan
+   dirsearch_scan
+   crt_scan
+   ;;
+ esac
+ echo "Generating recon report for $DOMAIN..."
+ TODAY=$(date)
+ echo "This scan was created on $TODAY" > $DIRECTORY/report
+  if [ -f $DIRECTORY/nmap ];then
+  echo "Results for Nmap:" >> $DIRECTORY/report
+  grep -E "^\s*\S+\s+\S+\s+\S+\s*$" $DIRECTORY/nmap >> $DIRECTORY/report
+ fi
+  if [ -f $DIRECTORY/dirsearch ];then
+  echo "Results for Dirsearch:" >> $DIRECTORY/report
+  cat $DIRECTORY/dirsearch >> $DIRECTORY/report
+ fi
+  if [ -f $DIRECTORY/crt ];then
+  echo "Results for crt.sh:" >> $DIRECTORY/report
+  jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report
+ fi
+ done
+```
+- loop starts with the `for` keyword and ends with the `done` keyword,
+- we check whether the output file of an `nmap` scan (`if [ -f $DIRECTORY/nmap ];then`), a `dirsearch` scan (`if [ -f $DIRECTORY/dirsearch ];then`), or a `crt.sh` scan (`if [ -f $DIRECTORY/crt ];then`) exist so we can determine if we need to generate a report for that scan type.
+
+The brackets `[]` mean that we’re passing the contents into a test command: 
+- `[ -f $DIRECTORY/nmap ]` is equivalent to `test -f $DIRECTORY/nmap`. The `test` command evaluates a conditional and outputs either `true` or `false`.
+- `-f` flag tests whether a file exists.
+
+Some useful test conditions:
+- `-eq` and `-ne` flags test for *equality* and *inequality*, respectively.
+
+This returns `true` if `$3` is *equal* to `1`:
+```
+if [ $3 -eq 1 ]
+```
+
+This returns `true` if `$3` is *not equal* to `1`:
+```
+if [ $3 -ne 1 ]
+```
+- `if [ $3 -gt 1 ]` - test for greater than,
+- `if [ $3 -ge 1 ]` - test for greater than or equal to,
+- `if [ $3 -lt 1 ]` - test for less than,
+- `if [ $3 -le 1 ]` - test for less than or equal to,
+- `if [ -z "" ]` and `if [ -n "abc" ]` - test whether a string is empty. These conditions are both true.
+
+The `-d`, `-f`, `-r`, `-w`, and `-x` flags check for directory and file statuses. 
+
+- `if [ -d /bin]` - returns `true` if `/bin` is a *directory* that exists,
+- `if [ -f /bin/bash ]` - returns `true` if `/bin/bash` is a *file* that exists,
+- `if [ -r /bin/bash ]` - returns `true` if `/bin/bash` is a *readable* file,
+- `if [ -w /bin/bash ]` - or a *writable* file,
+- `if [ -x /bin/bash ]` - or an *executable* file.
+
+You can also use `&&` and `||` to combine test expressions. 
+- `if [ $3 -gt 1 ] && [ $3 -lt 3 ]` - returns `true` if *both* expressions are `true`,
+- `if [ $3 -gt 1 ] || [ $3 -lt 0 ]` - returns `true` if *at least one of them* is `true`.
+
+Find more comparison flags in the `test` command’s manual by running `man test` (you can always enter `man` followed by the command name).
+
+
