@@ -405,4 +405,74 @@ Specify the *number* of characters to match:
 - `[a-z]` matches one of the characters within the range of *a* to *z*,
 - `(a|b|c)` matches either *a* or *b* or *c*.
 
-### Regex syntax - RexEgg’s cheat sheet - https://www.rexegg.com/regex-quickstart.html
+#### Regex syntax - RexEgg’s cheat sheet - https://www.rexegg.com/regex-quickstart.html
+
+## Building a Master Report
+
+- `jq` a command line utility that processes `JSON`.
+
+If we examine the `JSON` output file from `crt.sh`, we need to extract the `name_value` field of each certificate item to extract domain names:
+```
+$ jq -r ".[] | .name_value" $DOMAIN/crt
+```
+- `-r` flag tells `jq` to write the output directly to standard output rather than format it as `JSON` strings,
+- `.[]` iterates through the array within the `JSON` file, and
+- `.name_value` extracts the `name_value` field of each item,
+- `$DOMAIN/crt` is the input file to the `jq` command.
+
+#### How `jq` works - https://stedolan.github.io/jq/manual/
+
+To combine all output files into a master report:
+```
+#!/bin/bash
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+DOMAIN=$1
+DIRECTORY=${DOMAIN}_recon
+echo "Creating directory $DIRECTORY."
+mkdir $DIRECTORY
+nmap_scan()
+{
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+}
+dirsearch_scan()
+{
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+}
+crt_scan()
+{
+  curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+  echo "The results of cert parsing is stored in $DIRECTORY/crt."
+}
+case $2 in
+ nmap-only)
+  nmap_scan
+  ;;
+ dirsearch-only)
+  dirsearch_scan
+  ;;
+ crt-only)
+  crt_scan
+  ;;
+ *)
+  nmap_scan
+  dirsearch_scan
+  crt_scan
+  ;;
+esac
+echo "Generating recon report from output files..."
+TODAY=$(date)
+echo "This scan was created on $TODAY" > $DIRECTORY/report
+echo "Results for Nmap:" >> $DIRECTORY/report
+grep -E "^\s*\S+\s+\S+\s+\S+\s*$" $DIRECTORY/nmap >> $DIRECTORY/report
+echo "Results for Dirsearch:" >> $DIRECTORY/report
+cat $DIRECTORY/dirsearch >> $DIRECTORY/report
+echo "Results for crt.sh:" >> $DIRECTORY/report
+jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report
+```
+
+- `$DIRECTORY/report` create a new file named `report` and write today’s date into it,
+- `$DIRECTORY/nmap >> $DIRECTORY/report` append the results of the `nmap` and `dirsearch` commands into the `report` file,
+- `cat $DIRECTORY/dirsearch >> $DIRECTORY/report`. The `cat` command prints the contents of a file to standard output, but we can also use it to redirect the content of the file into another file,
+- `echo "Results for crt.sh:" >> $DIRECTORY/report` and `jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report` extract domain names from the `crt.sh` report and append it to the end of the `report` file.
