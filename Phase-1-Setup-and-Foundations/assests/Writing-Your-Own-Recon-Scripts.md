@@ -644,4 +644,75 @@ Find more comparison flags in the `test` command’s manual by running `man test
 
 ## Writing a Function Library
 
+As your codebase gets larger, you should writing a *function library* to *reuse code*. 
 
+We can store all the commonly used functions in a separate file `scan.lib`. 
+
+We can call these functions as needed for future recon tasks:
+```
+#!/bin/bash
+nmap_scan()
+{
+  nmap $DOMAIN > $DIRECTORY/nmap
+  echo "The results of nmap scan are stored in $DIRECTORY/nmap."
+}
+dirsearch_scan()
+{
+  $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --simple-report=$DIRECTORY/dirsearch
+  echo "The results of dirsearch scan are stored in $DIRECTORY/dirsearch."
+}
+crt_scan()
+{
+  curl "https://crt.sh/?q=$DOMAIN&output=json" -o $DIRECTORY/crt
+  echo "The results of cert parsing is stored in $DIRECTORY/crt."
+}
+```
+
+We source a script via the `source` command, followed by the path to the script:
+```
+#!/bin/bash
+source ./scan.lib
+PATH_TO_DIRSEARCH="/Users/vickieli/tools/dirsearch"
+getopts "m:" OPTION
+MODE=$OPTARG
+for i in "${@:$OPTIND:$#}"
+do
+ DOMAIN=$i
+ DIRECTORY=${DOMAIN}_recon
+ echo "Creating directory $DIRECTORY."
+ mkdir $DIRECTORY
+ case $MODE in
+  nmap-only)
+   nmap_scan
+   ;;
+  dirsearch-only)
+   dirsearch_scan
+   ;;
+  crt-only)
+   crt_scan
+   ;;
+  *)
+   nmap_scan
+   dirsearch_scan
+   crt_scan
+   ;;
+ esac
+ echo "Generating recon report for $DOMAIN..."
+ TODAY=$(date)
+ echo "This scan was created on $TODAY" > $DIRECTORY/report
+ if [ -f $DIRECTORY/nmap ];then
+   echo "Results for Nmap:" >> $DIRECTORY/report
+   grep -E "^\s*\S+\s+\S+\s+\S+\s*$" $DIRECTORY/nmap >> $DIRECTORY/report
+ fi
+ if [ -f $DIRECTORY/dirsearch ];then
+   echo "Results for Dirsearch:" >> $DIRECTORY/report
+   cat $DIRECTORY/dirsearch >> $DIRECTORY/report
+ fi
+ if [ -f $DIRECTORY/crt ];then
+   echo "Results for crt.sh:" >> $DIRECTORY/report
+   jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report
+ fi
+done
+```
+
+## Building Interactive Programs
