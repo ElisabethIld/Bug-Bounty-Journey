@@ -906,5 +906,21 @@ $ echo "abc '*' 123"
 
 - Certain special characters, remain special even within double quotes (" "), so to treat them literally, using a backslash:
 ```
-
+$ echo "\" is a double quote. \$ is a dollar sign. \` is a backtick. \\ is a backslash."
 ```
+This command will `echo`:
+```
+" is a double quote. $ is a dollar sign. ` is a backtick. \ is a backslash.
+```
+
+You can also use a backslash before a newline to indicate that the line of code has not ended:
+```
+chmod 777 \
+script.sh
+```
+is the same as this `chmod 777 script.sh`
+
+#### Set up a directory of scripts and sort your scripts by their *functionality*.
+
+
+## Scheduling Automatic Scans pag.128
