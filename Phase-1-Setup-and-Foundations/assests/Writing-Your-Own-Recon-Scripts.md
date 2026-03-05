@@ -716,3 +716,139 @@ done
 ```
 
 ## Building Interactive Programs
+
+Takes user input during execution; if users enter the command line option, `-i`, you want to enter an interactive mode that allows you to specify
+domains to scan as you go:
+```
+./recon.sh -i -m nmap-only
+```
+
+For that, you can use `read`. This command reads user input and stores the input string into a variable:
+```
+echo "Please enter a domain!"
+read $DOMAIN
+```
+These commands will prompt the user to enter a domain, then store the input inside a variable named `$DOMAIN`.
+
+To prompt a user repeatedly, we need to use a `while` loop.
+As long as the *CONDITION* is true, the `while` loop will execute the code between do and done *repeatedly*:
+```
+while CONDITION
+do
+ DO SOMETHING
+done
+```
+
+We can use a `while` loop, until the user enters `quit`:
+```
+while [ $INPUT != "quit" ];do
+ echo "Please enter a domain!"
+ read INPUT
+ if [ $INPUT != "quit" ];then
+  scan_domain $INPUT
+  report_domain $INPUT
+ fi
+done
+```
+
+We can use a `while` loop to parse options by using `getopts` repeatedly and invoke the `-i` option:
+```
+while getopts "m:i" OPTION; do
+ case $OPTION in
+  m)
+    MODE=$OPTARG
+    ;;
+  i)
+    INTERACTIVE=true
+    ;;
+ esac
+done
+```
+
+Here, we specify a `while` loop that gets command line options repeatedly:
+- If the option flag is `-m`, we set the `MODE` variable to the scan mode that the user has specified.
+- If the option flag is `-i`, we set the `$INTERACTIVE` variable to *true*.
+
+Then, later in the script, we can decide whether to invoke the interactive mode by checking the value of the `$INTERACTIVE` variable. 
+
+Putting it all together, we get our final script:
+```
+#!/bin/bash
+source ./scan.lib
+
+while getopts "m:i" OPTION; do
+ case $OPTION in
+  m)
+    MODE=$OPTARG
+    ;;
+  i)
+    INTERACTIVE=true
+    ;;
+ esac
+done
+
+scan_domain(){
+ DOMAIN=$1
+ DIRECTORY=${DOMAIN}_recon
+ echo "Creating directory $DIRECTORY."
+ mkdir $DIRECTORY
+ case $MODE in
+  nmap-only)
+   nmap_scan
+   ;;
+  dirsearch-only)
+   dirsearch_scan
+   ;;
+  crt-only)
+   crt_scan
+   ;;
+  *)
+   nmap_scan
+   dirsearch_scan
+   crt_scan
+   ;;
+ esac
+}
+report_domain(){
+  DOMAIN=$1
+  DIRECTORY=${DOMAIN}_recon
+  echo "Generating recon report for $DOMAIN..."
+ TODAY=$(date)
+  echo "This scan was created on $TODAY" > $DIRECTORY/report
+  if [ -f $DIRECTORY/nmap ];then
+   echo "Results for Nmap:" >> $DIRECTORY/report
+   grep -E "^\s*\S+\s+\S+\s+\S+\s*$" $DIRECTORY/nmap >> $DIRECTORY/report
+  fi
+  if [ -f $DIRECTORY/dirsearch ];then
+   echo "Results for Dirsearch:" >> $DIRECTORY/report
+   cat $DIRECTORY/dirsearch >> $DIRECTORY/report
+  fi
+  if [ -f $DIRECTORY/crt ];then
+   echo "Results for crt.sh:" >> $DIRECTORY/report
+   jq -r ".[] | .name_value" $DIRECTORY/crt >> $DIRECTORY/report
+  fi
+}
+if [ $INTERACTIVE ];then
+  INPUT="BLANK"
+  while [ $INPUT != "quit" ];do
+   echo "Please enter a domain!"
+   read INPUT
+   if [ $INPUT != "quit" ];then
+    scan_domain $INPUT
+    report_domain $INPUT
+   fi
+  done
+else
+  for i in "${@:$OPTIND:$#}";do
+   scan_domain $i
+   report_domain $i
+
+  done
+fi
+```
+- `if [ $INTERACTIVE ];then` we first check if the user has selected the interactive mode by specifying the `-i` option,
+- `while [ $INPUT != "quit" ];do` then repeatedly prompt the user for a domain by using a `while` loop,
+- `if [ $INPUT != "quit" ];then` the `while` loop will continue to run and ask the user for domains until the user enters `quit`, which will cause the `while` loop
+to exit and the program to terminate.
+
+## Using Special Variables and Characters
