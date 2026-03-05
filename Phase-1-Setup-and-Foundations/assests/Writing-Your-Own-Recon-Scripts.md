@@ -852,3 +852,59 @@ fi
 to exit and the program to terminate.
 
 ## Using Special Variables and Characters
+
+In Unix, commands return `0` on *success* a `positive integer` on *failure*.
+
+- `$?` contains the exit value of the last command executed.
+
+```
+#!/bin/sh
+chmod 777 script.sh
+if [ "$?" -ne "0" ]; then
+ echo "Chmod failed. You might not have permissions to do that!"
+fi
+```
+
+- `$$` which contains the current process’s ID (is useful when you need to create temporary files for the script).
+
+You can create temporary files named `/tmp/script_name_$$` for every one of scripts.
+
+If you want other programs to use the variable as well, you need to *export* the variable:
+```
+export VARIABLE_NAME=VARIABLE_VALUE
+```
+
+Let’s say that in one of your scripts you set the variable *VAR*:
+```
+VAR="Hello!"
+```
+
+If you export *VAR* in the first script and run that script *before* running a second script, the second script will be able to read *VAR’s* value.
+
+- In Unix, the wildcard character `*` stands for *all*.
+
+This command will print out *all the filenames* in the *current directory* that have the file extension `.txt`:
+```
+$ ls *.txt
+```
+
+- Backticks (`) indicate *command substitution*. You can use both backticks and the $() command substitution syntax mentioned earlier for the same purpose. 
+
+This `echo` command will print the output of the `whoami` command:
+```
+echo `whoami`
+```
+
+- Most special characters, aren’t interpreted as special when they are placed in double quotes (" ").
+
+Instead, they’re treated as part of a string:
+```
+$ echo "abc '*' 123"
+```
+
+- The backslash (\), the escape character in bash. It tells bash that a certain character should be interpreted *literally*, and not as a special character.
+
+- Certain special characters, remain special even within double quotes (" "), so to treat them literally, using a backslash:
+```
+
+```
